@@ -1,42 +1,60 @@
-# Task API 
+# Task API
 
-## About 
-A REST API for managing users and tasks.
+## About
+
+A REST API for managing users and tasks, built with FastAPI and PostgreSQL.
 
 ## Tech Stack
+
 - Python
 - FastAPI
 - PostgreSQL
-- SQLAlchemy 2
+- SQLAlchemy 2 (Async)
 - Alembic
+- Redis
 - Docker Compose
 
-## Features 
+## Features
+
 The project provides CRUD operations for users and tasks.
 
 Users can:
-* Create a user
-* Get a list of users
-* Get a user by ID
-* Update a user
-* Partially update a user
-* Delete a user
+- Create a user
+- Get a list of users
+- Get a user by ID
+- Update a user
+- Partially update a user
+- Delete a user
 
 Tasks can:
-* Create a task
-* Get a list of tasks
-* Get a task by ID
-* Get tasks for a specific user
-* Update a task
-* Partially update a task
-* Delete a task 
+- Create a task
+- Get a list of tasks
+- Get a task by ID
+- Get tasks for a specific user
+- Update a task
+- Partially update a task
+- Delete a task
 
-The API returns a 404 Not Found error when a requested user or task does not exist.
+The API returns a `404 Not Found` error when a requested user or task does not exist.
+
+## Redis Caching
+
+Redis is used as a caching layer to reduce unnecessary database queries.
+
+Implemented features:
+- Cache task lists using the `tasks:list` key.
+- Cache individual tasks using keys such as `task:1`.
+- Set a TTL of 300 seconds for cached data.
+- Invalidate relevant cache keys after creating, updating, or deleting tasks.
+- Handle Redis errors gracefully and fall back to PostgreSQL when Redis is unavailable.
+
+PostgreSQL remains the primary data source. Redis is an auxiliary service.
 
 ## API Endpoints
+
 ### Users
 
-| Method|Endpoint|Description|
+| Method | Endpoint | Description |
 |---|---|---|
 | `POST` | `/users` | Create a user |
 | `GET` | `/users` | Get all users |
@@ -66,21 +84,32 @@ The API returns a 404 Not Found error when a requested user or task does not exi
 
 ### Clone the repository
 
-Clone the repository:
-
 ```bash
 git clone https://github.com/TheDaynad/task-api.git
 cd task-api
 ```
+
 ### Configure environment variables
 
-Create your local environment file from the example:
+Create a local environment file from the example:
 
+**Windows PowerShell:**
+```powershell
+Copy-Item .env.example .env
+```
+
+**Linux / macOS:**
 ```bash
 cp .env.example .env
 ```
 
 Update the values in `.env` if needed.
+
+Make sure `REDIS_URL` is configured:
+
+```env
+REDIS_URL=redis://redis:6379/0
+```
 
 ### Start the application
 
@@ -96,9 +125,7 @@ docker compose exec api alembic upgrade head
 
 ### Open API documentation
 
-Open Swagger UI in your browser:
+Swagger UI:
 
 http://localhost:8000/docs
-
-
 
